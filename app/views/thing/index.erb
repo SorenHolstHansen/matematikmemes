@@ -1,0 +1,10 @@
+<h1>Things</h1>
+
+<% if @things.any? %>
+    <% @things.each do |thing| %>
+        <p><a href="/things/<%= thing.id %>"><%= thing.name %></a></p>
+        <a href="/things/<%= thing.id %>/edit">Edit</a>
+    <% end %>
+<% end %>
+
+<a href="/things/new">Make a new thing</a>
