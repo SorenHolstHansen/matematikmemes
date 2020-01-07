@@ -14,6 +14,8 @@ class App < Sinatra::Base
 
 
     get "/" do
-        "go to <a href=\"/things\">things</a>"
+        # Get posts: posts = .... Order them by likes
+        @posts = get_facebook_page_data().first(3)
+        erb :main
     end
 end
