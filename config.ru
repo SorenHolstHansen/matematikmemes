@@ -5,4 +5,3 @@ require './config/boot.rb'
 #use Sass::Plugin::Rack
 
 map('/') { run App }
-map('/things') { run ThingController }
