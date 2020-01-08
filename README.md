@@ -2,10 +2,9 @@
 
 ## To-Do
 - Get a lasting access token
-- Everything else
-- Load response once, and keep it in store.
 - favicon
 - Design
-- Bootstrap?
 - Log scraping errors
-- Reformat created_time, reactions...
+- Make a .rake file for cron job
+- Display images
+- Fetch name of the guy who posted

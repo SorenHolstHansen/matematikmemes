@@ -4,13 +4,17 @@
     <% @posts.each do |post| %>
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Name</h5>
-                <p class="card-text"><%= post["message"] %></p>
-                <p card-text><small class="text-muted"><%= post["created_time"] %></small></p>
-                <p card-text><small class="text-muted">reactions</small></p>
-                <a href="link"></a>
+                <h5 class="card-title"><%= post.message %></h5>
+                <p class="card-text"><small class="text-muted"><%= post.created_time.strftime("%d %B at %H:%M") %></small></p>
+                <p class="card-text"><small class="text-muted"><%= pluralize("reaction", post.reactions) %></small></p>
+                <p class="card-text"><small class="text-muted"><%= pluralize("comment", post.comments) %></small></p>
+                <% if !post.link.nil? %>
+                    <a href=<%= post.link %>>link</a>
+                <% end %>
             </div>
-            <img src=<%= post["full_picture"] %> class="card-img-top" alt="...">
+            <% if post.picture != "" %>
+                <img src=<%= post.picture %> class="card-img-top" alt="...">
+            <% end %>
         </div>
     <% end %>
 <% end %>

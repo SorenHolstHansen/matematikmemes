@@ -5,6 +5,7 @@ and translated to ruby
 
 require 'net/http'
 require 'json'
+require 'date'
 
 =begin
 INPUTS:
@@ -49,11 +50,11 @@ def get_facebook_page_data
     page_id = "852892394871017"
     location = "#{page_id}/feed/"
 
-    access_token = "EAAImr7nn3wQBAIcBGozrZA981MYcT4k7pHk6qZAs8JRDZAZBw6cmdjiBPJS2UuoMkNYptM02oZBUYxssEZBXPOevynqc5BTib48md9H0XnX3tKZAFCd1VYZC1LfPU52j4ZAdR7geWGPvuIrLt3pssue3ouOCZBNazmqYMPe6UppLFSAoA8Gt4l1rl4QgMVAJQD0Km6VPVP52rV3wZDZD"
+    access_token = "EAAImr7nn3wQBACwEMAIIDxFseXzLT60fggCRSZAW2aUZCJqYChLwX0YPAU7UHluVP88ZAeAP1nKPnNBkdvoelkWFnWx1H8pfNAYUAhwKfvpya1RLGjry2IvG0MZAXj6tKr1jxWWjPmVrlZBUn4hmbNlab0ZCnVPPyn10tuKLLZCq3kvKZBV1bqolhtZBe8w7pGdoC0jXyx5XumrWQjZBIAstbFdubi5UVjZBeSYwqUHODZCOAQZDZD" # Should be changed to get_app_access_token()
 
     #the .limit(0).summary(true) is used to get a summarized count of all the ...
     #...comments and reactions instead of getting each individual one
-    fields = "?fields=message,full_picture,created_time,name,link,id,reactions.limit(0).summary(true)" # Måske mindre, men måske også comments
+    fields = "?fields=message,full_picture,created_time,link,id,reactions.limit(0).summary(true),comments.limit(0).summary(true)" # Måske mindre, men måske også comments
 
     authentication = "&limit=100&access_token=" + access_token
 
@@ -61,15 +62,91 @@ def get_facebook_page_data
 
     #converts facebook's response to a ruby hash to easier manipulate later
     data = JSON.parse(request_data_from_url(request_url))
-    return data["data"]
+    return data
 end
 
 =begin
 INPUTS:
-    json data from get_facebook_page_data
+    post: information about a single post on the facebook page
+    access_token: authentication proving that you have a valid facebook account
 OUTPUTS:
-    json data with the fields (not necessarily in this order):
-    name, message, created_time, like, love, wow, haha, sad, angry, picture, link, popularity
-
-    where popularity is given as like + love + wow + haha - sad - angry. It is used for ordering the data
+    a list with the requested fields for this post
 =end
+def process_post(post)
+
+    post_id = post["id"]
+
+    post_message = post.keys.include?("message") ? post["message"] : ""
+
+    post_picture = post.keys.include?("full_picture") ? post["full_picture"] : ""
+
+    post_link = post["link"]
+
+    #for datetime info, we need a few extra steps
+    #first convert the given datetime into the format we want
+    post_published = DateTime.strptime(post["created_time"],"%Y-%m-%dT%H:%M:%S+0000")
+    #then account for the time difference between the returned time and my time zone
+    post_published = post_published + (1.0 / 24.0) # + 1 hour
+
+    num_reactions = post.include?("reactions") ? post["reactions"]["summary"]["total_count"] : 0
+    num_comments = post.include?("comments") ? post["comments"]["summary"]["total_count"] : 0
+
+    #return a list of all the fields we asked for
+    hash = { :message => post_message, :picture => post_picture, :created_time => post_published, :link => post_link, :fb_id => post_id, :reactions => num_reactions, :comments => num_comments }
+    return hash
+end
+
+
+def update_post_in_database(post_hash)
+    # try and find post in database using fb_id
+    post = Post.first(:fb_id => post_hash[:fb_id])
+    # If you find it, update it, if it needs to be updated
+    if !post.nil?
+        post.update(post_hash)
+    # Otherwise make a new database entry
+    else
+        Post.create(post_hash)
+    end
+end
+
+# Function to make the whole database
+def update_database()
+    has_next_page = true
+    num_processed = 0
+    scrape_starttime = DateTime.now
+
+    print "Scraping Matematik Memes Facebook Page: #{scrape_starttime}\n"
+
+    #get first batch of posts
+    posts = get_facebook_page_data()
+
+    #while there is another page of posts to process
+    while has_next_page do
+
+        if num_processed == 200
+            break
+        end
+
+        #for each individual post in our retrieved posts ...
+        for post in posts['data']
+
+            #...get post info and write to our spreadsheet
+            update_post_in_database(process_post(post))
+
+            num_processed += 1
+        end
+
+        #if there is a next page of posts to get, then get next page to process
+        if posts.keys.include?("paging")
+            posts = JSON.parse(request_data_from_url(posts["paging"]["next"]))
+        #otherwise, we are done!
+        else
+            has_next_page = false
+        end
+    end
+
+    print("Completed!\n#{num_processed} posts Processed in #{DateTime.now - scrape_starttime}")
+end
+
+
+# Get a lasting access token (https://developers.facebook.com/docs/facebook-login/access-tokens/#apptokens)

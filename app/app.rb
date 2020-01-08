@@ -5,17 +5,28 @@ class App < Sinatra::Base
     set :views, Proc.new { File.join(root, "app/views") }
     set :public_folder, Proc.new { File.join(root, "public") }
     set :erb, layout_options: {views: 'app/views/layouts'}
+    set :db, File.join(root, "db")
     enable :method_override
     enable :logging
 
-    configure :development, :test do
+    configure :development do
         register Sinatra::Reloader
+        DataMapper.setup(:default, "sqlite3://#{settings.db}/development.db")
+    end
+
+    configure :production do
+        DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
+    end
+
+    configure :test do
+        register Sinatra::Reloader
+        DataMapper.setup(:default, "sqlite3://#{settings.db}/test.db")
     end
 
 
     get "/" do
         # Get posts: posts = .... Order them by likes
-        @posts = get_facebook_page_data().first(3)
+        @posts = Post.all(:order => [ :reactions.desc ],:limit => 10)
         erb :main
     end
 end
