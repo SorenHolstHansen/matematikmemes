@@ -25,8 +25,11 @@ class App < Sinatra::Base
 
 
     get "/" do
-        # Get posts: posts = .... Order them by likes
-        @posts = Post.all(:order => [ :reactions.desc ],:limit => 10)
+        @posts = Post.all(:order => [ :reactions.desc ],:limit => 50)
         erb :main
+    end
+
+    get "/om" do
+        erb :about
     end
 end

@@ -1,13 +1,33 @@
 <!doctype html>
 <html>
 <head>
-    <title><%= title %></title>
+    <title>Matematik Memes</title>
     <meta charset = "utf-8">
+
+    <%# Favicon %>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
 
     <%# Bootstrap %>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" />
 </head>
 <body>
+
+    <header class="mb-3">
+        <h1 class="display-1 text-center">Matematik Memes</h1>
+
+        <ul class="nav nav-tabs justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link <%= request.path_info == "/" ? "active" : "" %>" href="/">Memes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= request.path_info == "/om" ? "active" : "" %>" href="/om">Om</a>
+            </li>
+        </ul>
+    </header>
+
     <main>
         <%= yield %>
     </main>

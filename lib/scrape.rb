@@ -50,11 +50,13 @@ def get_facebook_page_data
     page_id = "852892394871017"
     location = "#{page_id}/feed/"
 
-    access_token = "EAAImr7nn3wQBACwEMAIIDxFseXzLT60fggCRSZAW2aUZCJqYChLwX0YPAU7UHluVP88ZAeAP1nKPnNBkdvoelkWFnWx1H8pfNAYUAhwKfvpya1RLGjry2IvG0MZAXj6tKr1jxWWjPmVrlZBUn4hmbNlab0ZCnVPPyn10tuKLLZCq3kvKZBV1bqolhtZBe8w7pGdoC0jXyx5XumrWQjZBIAstbFdubi5UVjZBeSYwqUHODZCOAQZDZD" # Should be changed to get_app_access_token()
+    # To get new long-lasting access-token, go to https://developers.facebook.com/tools/explorer?method=GET&path=&version=v5.0
+    # Check info of access token and extend it
+    access_token = "EAAImr7nn3wQBAKdfoRwAdhpZCW2TXaZCaOX2pTHWXspeqS7cYZA9ls6p3wpxXmlAKwt0ZCV7ybinEtNIzTCFKTbMT2Dkj291RGXezozDjfnc5r6Q4bErFsUIpGlUDIroOzScoKrkxJ4D4mEBZAeGynZBk8lEjVj87gpjYD8r7BJwZDZD"
 
     #the .limit(0).summary(true) is used to get a summarized count of all the ...
     #...comments and reactions instead of getting each individual one
-    fields = "?fields=message,full_picture,created_time,link,id,reactions.limit(0).summary(true),comments.limit(0).summary(true)" # Måske mindre, men måske også comments
+    fields = "?fields=message,full_picture,created_time,permalink_url,id,reactions.limit(0).summary(true),comments.limit(0).summary(true)" # Måske mindre, men måske også comments
 
     authentication = "&limit=100&access_token=" + access_token
 
@@ -80,7 +82,7 @@ def process_post(post)
 
     post_picture = post.keys.include?("full_picture") ? post["full_picture"] : ""
 
-    post_link = post["link"]
+    post_link = post["permalink_url"]
 
     #for datetime info, we need a few extra steps
     #first convert the given datetime into the format we want
@@ -123,9 +125,9 @@ def update_database()
     #while there is another page of posts to process
     while has_next_page do
 
-        if num_processed == 200
-            break
-        end
+        #if num_processed == 200
+        #    break
+        #end
 
         #for each individual post in our retrieved posts ...
         for post in posts['data']

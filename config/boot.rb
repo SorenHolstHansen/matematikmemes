@@ -13,8 +13,5 @@ Dir.glob('./lib/*.rb').each { |file| require file }
 
 DataMapper.finalize
 DataMapper.auto_upgrade!
-#DataMapper.auto_migrate!
 
 # update_database()
-
-# Dir.glob('./app/controllers/*.rb').each { |file| require file }
