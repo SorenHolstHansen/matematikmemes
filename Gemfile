@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'rake'
 
 ## ORM : DataMapper ##
 gem 'dm-validations'
