@@ -50,7 +50,7 @@ INPUTS:
 OUTPUTS:
     a python dictionary of the data on your requested page
 =end
-def get_facebook_page_data(access_token = nil)
+def get_facebook_page_data()
     website = "https://graph.facebook.com/v5.0/"
     page_id = "852892394871017"
     location = "#{page_id}/feed/"
@@ -126,7 +126,7 @@ def update_database()
     print "Scraping Matematik Memes Facebook Page: #{scrape_starttime}\n"
 
     #get first batch of posts
-    posts = get_facebook_page_data(access_token)
+    posts = get_facebook_page_data()
 
     #while there is another page of posts to process
     while has_next_page do
