@@ -16,7 +16,12 @@ OUTPUTS:
 def request_data_from_url(url)
     req = URI(url)
     success = false
+    attempts = 1
     while success == false
+        if attempts > 5
+            break
+        end
+        attempts += 1
         begin
             # open the url
             response = Net::HTTP.get_response(req)
@@ -45,14 +50,17 @@ INPUTS:
 OUTPUTS:
     a python dictionary of the data on your requested page
 =end
-def get_facebook_page_data
+def get_facebook_page_data(access_token = nil)
     website = "https://graph.facebook.com/v5.0/"
     page_id = "852892394871017"
     location = "#{page_id}/feed/"
 
     # To get new long-lasting access-token, go to https://developers.facebook.com/tools/explorer?method=GET&path=&version=v5.0
     # Check info of access token and extend it
-    access_token = "EAAImr7nn3wQBAKdfoRwAdhpZCW2TXaZCaOX2pTHWXspeqS7cYZA9ls6p3wpxXmlAKwt0ZCV7ybinEtNIzTCFKTbMT2Dkj291RGXezozDjfnc5r6Q4bErFsUIpGlUDIroOzScoKrkxJ4D4mEBZAeGynZBk8lEjVj87gpjYD8r7BJwZDZD"
+    if access_token == nil
+            access_token = "EAAImr7nn3wQBALtsdA9giYQAuZC5cRjmX7bs0uruvRZA9qk8vgqoQwSfctTa8OsbZAnC7Lav6GpIl75E8Jdeg3hMeasEnngC5iqDNG4UNqzYvxD4QrTazCjwCxPTXxGNAB0KmrgtezT1uHxVyej5TazEvLJ2m8eyF4MhwuVaaFGBQh7oV24feiuQZC9MYVO4tNxdDEwlAWayHdCs8gK5IaCqSESwPHrQHLRKoxIspgZDZD"
+    end
+
 
     #the .limit(0).summary(true) is used to get a summarized count of all the ...
     #...comments and reactions instead of getting each individual one
@@ -119,8 +127,13 @@ def update_database()
 
     print "Scraping Matematik Memes Facebook Page: #{scrape_starttime}\n"
 
+    print "Input access token: \n"
+    access_token = gets
+    print "\n You put in"
+    print access_token
+
     #get first batch of posts
-    posts = get_facebook_page_data()
+    posts = get_facebook_page_data(access_token)
 
     #while there is another page of posts to process
     while has_next_page do
@@ -128,6 +141,7 @@ def update_database()
         #if num_processed == 200
         #    break
         #end
+        print "processing new batch of 100 posts\n"
 
         #for each individual post in our retrieved posts ...
         for post in posts['data']
