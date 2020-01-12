@@ -57,9 +57,7 @@ def get_facebook_page_data(access_token = nil)
 
     # To get new long-lasting access-token, go to https://developers.facebook.com/tools/explorer?method=GET&path=&version=v5.0
     # Check info of access token and extend it
-    if access_token == nil
-            access_token = "EAAImr7nn3wQBALtsdA9giYQAuZC5cRjmX7bs0uruvRZA9qk8vgqoQwSfctTa8OsbZAnC7Lav6GpIl75E8Jdeg3hMeasEnngC5iqDNG4UNqzYvxD4QrTazCjwCxPTXxGNAB0KmrgtezT1uHxVyej5TazEvLJ2m8eyF4MhwuVaaFGBQh7oV24feiuQZC9MYVO4tNxdDEwlAWayHdCs8gK5IaCqSESwPHrQHLRKoxIspgZDZD"
-    end
+    access_token = "EAAImr7nn3wQBALtsdA9giYQAuZC5cRjmX7bs0uruvRZA9qk8vgqoQwSfctTa8OsbZAnC7Lav6GpIl75E8Jdeg3hMeasEnngC5iqDNG4UNqzYvxD4QrTazCjwCxPTXxGNAB0KmrgtezT1uHxVyej5TazEvLJ2m8eyF4MhwuVaaFGBQh7oV24feiuQZC9MYVO4tNxdDEwlAWayHdCs8gK5IaCqSESwPHrQHLRKoxIspgZDZD"
 
 
     #the .limit(0).summary(true) is used to get a summarized count of all the ...
@@ -126,11 +124,6 @@ def update_database()
     scrape_starttime = DateTime.now
 
     print "Scraping Matematik Memes Facebook Page: #{scrape_starttime}\n"
-
-    print "Input access token: \n"
-    access_token = gets
-    print "\n You put in"
-    print access_token
 
     #get first batch of posts
     posts = get_facebook_page_data(access_token)
