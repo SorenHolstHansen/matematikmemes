@@ -14,4 +14,4 @@ Dir.glob('./lib/*.rb').each { |file| require file }
 DataMapper.finalize
 DataMapper.auto_upgrade!
 
-update_database()
+# update_database()
