@@ -6,6 +6,7 @@ and translated to ruby
 require 'net/http'
 require 'json'
 require 'date'
+require './lib/access_token'
 
 =begin
 INPUTS:
@@ -55,9 +56,8 @@ def get_facebook_page_data()
     page_id = "852892394871017"
     location = "#{page_id}/feed/"
 
-    # To get new long-lasting access-token, go to https://developers.facebook.com/tools/explorer?method=GET&path=&version=v5.0
-    # Check info of access token and extend it
-    access_token = "EAAImr7nn3wQBALtsdA9giYQAuZC5cRjmX7bs0uruvRZA9qk8vgqoQwSfctTa8OsbZAnC7Lav6GpIl75E8Jdeg3hMeasEnngC5iqDNG4UNqzYvxD4QrTazCjwCxPTXxGNAB0KmrgtezT1uHxVyej5TazEvLJ2m8eyF4MhwuVaaFGBQh7oV24feiuQZC9MYVO4tNxdDEwlAWayHdCs8gK5IaCqSESwPHrQHLRKoxIspgZDZD"
+    # To get an access-token, go to https://developers.facebook.com/tools/explorer?method=GET&path=&version=v5.0
+    access_token = token()
 
 
     #the .limit(0).summary(true) is used to get a summarized count of all the ...

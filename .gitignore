@@ -5,3 +5,4 @@ vendor/gems/*
 db/*.db
 .*.sw*
 .lock
+access_token.rb
